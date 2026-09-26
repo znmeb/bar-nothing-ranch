@@ -1,3 +1,3 @@
-# environment variables for the pod
+echo "..setting pod environment variables"
 
 export POD_NAME="bar-nothing-ranch"
