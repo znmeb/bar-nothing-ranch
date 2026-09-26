@@ -1,0 +1,3 @@
+# environment variables for the pod
+
+export POD_NAME="bar-nothing-ranch"
