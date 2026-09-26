@@ -1,5 +1,0 @@
-source ../set-pod-envars
-echo "..setting container environment variables"
-
-export CONTAINER_NAME="R-AI-D"
-export IMAGE_NAME="quay.io/fedora/fedora-toolbox:44"
