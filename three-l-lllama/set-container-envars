@@ -1,0 +1,11 @@
+source ../set-pod-envars
+
+echo "Setting container environment variables"
+
+## Image
+export IMAGE_NAME="three-l-lllama-base:latest"
+echo "IMAGE_NAME: $IMAGE_NAME"
+
+## Container
+export CONTAINER_NAME="THREE-L-LLLAMA"
+echo "CONTAINER_NAME: $CONTAINER_NAME"

@@ -5,5 +5,11 @@ set -eu
 source set-pod-envars
 
 podman pod create \
-    --name $POD_NAME
+    $NVIDIA_FLAGS \
+    $SECURITY_FLAGS \
+    --hostname=$POD_NAME \
+    --infra-name=$POD_NAME \
+    --name=$POD_NAME \
+    --replace \
+    --userns=keep-id
 podman pod list

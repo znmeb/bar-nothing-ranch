@@ -1,6 +1,7 @@
 echo "Setting pod environment variables"
 
 export POD_NAME="bar-nothing-ranch"
+echo "POD_NAME: $POD_NAME"
 
 echo "Setting host-specific environment variables:"
 
