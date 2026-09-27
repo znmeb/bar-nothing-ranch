@@ -8,16 +8,16 @@ rm --force $LOGFILE
 
 echo "....Installing Homebrew"
 NONINTERACTIVE=1 /bin/bash -c \
-  "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" \
-  >> $LOGFILE 2>&1
+    "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" \
+    >> $LOGFILE 2>&1
 
 if [[ "$(grep linuxbrew $HOME/.bashrc 2> /dev/null | wc -l)" == "0" ]]
 then
-  echo "....Adding Homebrew init to the command line"
-  echo "" >> $HOME/.bashrc
-  echo \
-    'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv bash)"' \
-    >> $HOME/.bashrc
+    echo "....Adding Homebrew init to the command line"
+    echo "" >> $HOME/.bashrc
+    echo \
+      'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv bash)"' \
+      >> $HOME/.bashrc
 
 fi
 
@@ -26,23 +26,23 @@ eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv bash)"
 
 echo "....Installing brew packages"
 brew install --yes --quiet \
-  bubblewrap \
-  fennel \
-  font-caskaydia-cove-nerd-font \
-  font-fira-code-nerd-font \
-  luarocks \
-  neovim \
-  node \
-  ripgrep \
-  starship \
-  tmux \
-  tree \
-  uv \
-  >> $LOGFILE 2>&1
+    bubblewrap \
+    fennel \
+    font-caskaydia-cove-nerd-font \
+    font-fira-code-nerd-font \
+    luarocks \
+    neovim \
+    node \
+    ripgrep \
+    starship \
+    tmux \
+    tree \
+    uv \
+    >> $LOGFILE 2>&1
 
 echo "....Cleaning up"
 brew cleanup --prune all --scrub --quiet \
-  >> $LOGFILE 2>&1
+    >> $LOGFILE 2>&1
 
 echo "....Setting neovim configuration files"
 mkdir --parents $HOME/.config
@@ -56,9 +56,9 @@ cp starship.toml $HOME/.config/
 
 if [[ "$(grep starship $HOME/.bashrc | wc -l)" == 0 ]]
 then
-  echo "....Appending starship init to $HOME/.bashrc"
-  echo "" >> $HOME/.bashrc
-  echo 'eval "$(starship init bash)"' >> $HOME/.bashrc
+    echo "....Appending starship init to $HOME/.bashrc"
+    echo "" >> $HOME/.bashrc
+    echo 'eval "$(starship init bash)"' >> $HOME/.bashrc
 
 fi
 

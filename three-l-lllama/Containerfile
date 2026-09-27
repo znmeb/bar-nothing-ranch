@@ -1,4 +1,4 @@
-FROM quay.io/toolbx-images/debian-toolbox:13
+FROM quay.io/toolbx/ubuntu-toolbox:26.04
 LABEL maintainer="M. Edward (Ed) Borasky <znmeb@algocompsynth.com>"
 
 ENV ADMIN_USER=$ADMIN_USER
@@ -7,9 +7,8 @@ ENV ADMIN_HOME=$ADMIN_HOME
 # some scripts won't work without 'sudo'
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update -qq \
-  && apt-get install -qqy \
-  sudo \
-  > bootstrap.log 2>&1
+  && apt-get dist-upgrade -qqy \
+  > upgrade.log 2>&1
 RUN nvidia-smi || true
 
 # create the admin user
@@ -32,6 +31,7 @@ RUN mkdir --parents /home/linuxbrew/.linuxbrew \
 USER $ADMIN_USER
 RUN ./2-user-scripts.sh
 
-WORKDIR $ADMIN_HOME
+WORKDIR /
+USER root
 
 CMD /sbin/init
