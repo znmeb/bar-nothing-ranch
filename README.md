@@ -17,7 +17,7 @@ into, but share nothing with your host you haven't explicitly
 allowed. Think of it as a Distrobox with more isolation from
 your desktop environment.
 
-## Current denizens of the ranch
+## Planned denizens of the ranch
 
 - bar-nothing-ranch: this is the pod. All the other containers
 belong to this pod.
