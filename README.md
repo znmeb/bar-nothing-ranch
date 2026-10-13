@@ -1,4 +1,4 @@
-# bar-nothing-ranch
+# Bar Nothing Ranch
 
 Contaner wrangling for pets and cattle
 
