@@ -4,14 +4,17 @@ LABEL maintainer="M. Edward (Ed) Borasky <znmeb@algocompsynth.com>"
 ARG RSTUDIO_USER=$RSTUDIO_USER
 ARG RSTUDIO_PASSWD=$RSTUDIO_PASSWD
 ARG RSTUDIO_FULLNAME=$RSTUDIO_FULLNAME
+ARG RSTUDIO_PACKAGE=$RSTUDIO_PACKAGE
 
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && \
     apt-get install -qqy --no-install-recommends \
-        gdebi-core \
+        curl \
         r-base-dev \
-        sudo && \
+        sudo \
+        ubuntu-server-minimal \
+        wget && \
     apt-get clean -y
 
 RUN usermod \
@@ -21,3 +24,11 @@ RUN usermod \
         --move-home \
         ubuntu && \
     echo "${RSTUDIO_USER}:${RSTUDIO_PASSWD}" | chpasswd
+
+# https://docs.posit.co/ide/server-pro/admin/getting_started/installation/install-rstudio-server.html#download-and-install
+RUN wget --quiet "${RSTUDIO_PACKAGE}" && \
+    apt-get install -qqy \
+        ./rstudio-server-*.deb && \
+    rm rstudio-server-*.deb
+
+CMD /sbin/init
