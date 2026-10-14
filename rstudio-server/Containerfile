@@ -8,9 +8,11 @@ ARG RSTUDIO_PACKAGE=$RSTUDIO_PACKAGE
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && \
+RUN apt-get update -qq && \
     apt-get install -qqy --no-install-recommends \
+        ca-certificates \
         curl \
+        gnupg \
         r-base-dev \
         sudo \
         ubuntu-server-minimal \
@@ -29,6 +31,13 @@ RUN usermod \
 RUN wget --quiet "${RSTUDIO_PACKAGE}" && \
     apt-get install -qqy \
         ./rstudio-server-*.deb && \
+    apt-get clean -y && \
     rm rstudio-server-*.deb
+
+# https://cran4linux.github.io/bspm/#ubuntu
+RUN . /etc/os-release && \
+    URL="https://raw.githubusercontent.com/eddelbuettel/r2u/master/inst/scripts" && \
+    curl -s "${URL}/add_cranapt_${UBUNTU_CODENAME}.sh" | bash -s && \
+    apt-get clean -y
 
 CMD /sbin/init
