@@ -1,0 +1,23 @@
+FROM docker.io/library/ubuntu:resolute
+LABEL maintainer="M. Edward (Ed) Borasky <znmeb@algocompsynth.com>"
+
+ARG RSTUDIO_USER=$RSTUDIO_USER
+ARG RSTUDIO_PASSWD=$RSTUDIO_PASSWD
+ARG RSTUDIO_FULLNAME=$RSTUDIO_FULLNAME
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && \
+    apt-get install -qqy --no-install-recommends \
+        gdebi-core \
+        r-base-dev \
+        sudo && \
+    apt-get clean -y
+
+RUN usermod \
+        --comment "${RSTUDIO_FULLNAME}" \
+        --home "/home/${RSTUDIO_USER}" \
+        --login "${RSTUDIO_USER}" \
+        --move-home \
+        ubuntu && \
+    echo "${RSTUDIO_USER}:${RSTUDIO_PASSWD}" | chpasswd
