@@ -11,6 +11,7 @@ podman image build \
     --dns 1.1.1.1 \
     --pull=newer \
     --tag rstudio-server \
+    --squash-all \
     .
 
 podman image list
