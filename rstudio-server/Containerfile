@@ -16,15 +16,19 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update -qq \
     2>&1 | gzip -9c > /apt-update.log.gz
-RUN apt-get install -qqy --no-install-recommends \
+RUN apt-get install -qqy \
+        apt-file \
         ca-certificates \
+        cmake \
         curl \
+        dialog \
         git \
         gnupg \
         locales \
+        openssh-client \
         r-base-dev \
         sudo \
-        ubuntu-server \
+        ubuntu-server-minimal \
         wget \
         2>&1 | gzip -9c > /apt-install.log.gz
 
