@@ -6,12 +6,19 @@ ARG RSTUDIO_PASSWD=$RSTUDIO_PASSWD
 ARG RSTUDIO_FULLNAME=$RSTUDIO_FULLNAME
 ARG RSTUDIO_PACKAGE=$RSTUDIO_PACKAGE
 
+ARG RSTUDIO_HOME="/home/${RSTUDIO_USER}"
+ARG RSTUDIO_LOGFILES="${RSTUDIO_HOME}/Logfiles"
+ARG RSTUDIO_SCRIPTS="${RSTUDIO_HOME}/Scripts"
+ARG RSTUDIO_PROJECTS="${RSTUDIO_HOME}/Projects"
+ARG RSTUDIO_LOCALBIN="${RSTUDIO_HOME}/.local/bin"
+
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update -qq && \
     apt-get install -qqy --no-install-recommends \
         ca-certificates \
         curl \
+        git \
         gnupg \
         r-base-dev \
         sudo \
@@ -21,10 +28,11 @@ RUN apt-get update -qq && \
 
 RUN usermod \
         --comment "${RSTUDIO_FULLNAME}" \
-        --home "/home/${RSTUDIO_USER}" \
+        --home "${RSTUDIO_HOME}" \
         --login "${RSTUDIO_USER}" \
         --move-home \
         ubuntu && \
+    groupmod --new-name "${RSTUDIO_USER}" ubuntu && \
     echo "${RSTUDIO_USER}:${RSTUDIO_PASSWD}" | chpasswd
 
 # https://docs.posit.co/ide/server-pro/admin/getting_started/installation/install-rstudio-server.html#download-and-install
@@ -39,5 +47,20 @@ RUN . /etc/os-release && \
     URL="https://raw.githubusercontent.com/eddelbuettel/r2u/master/inst/scripts" && \
     curl -s "${URL}/add_cranapt_${UBUNTU_CODENAME}.sh" | bash -s && \
     apt-get clean -y
+
+COPY --chown="${RSTUDIO_USER}:${RSTUDIO_USER}" scripts/ $RSTUDIO_SCRIPTS/
+RUN mkdir -p $RSTUDIO_PROJECTS $RSTUDIO_LOGFILES $RSTUDIO_LOCALBIN && \
+    chown -R "${RSTUDIO_USER}:${RSTUDIO_USER}" $RSTUDIO_HOME && \
+    mkdir -p /home/linuxbrew/.linuxbrew/ && \
+    chown -R "${RSTUDIO_USER}:${RSTUDIO_USER}" /home/linuxbrew/.linuxbrew/
+
+USER $RSTUDIO_USER
+WORKDIR $RSTUDIO_SCRIPTS
+
+RUN ./command-line-base.sh && \
+    ./ai-tools.sh
+
+USER root
+WORKDIR /
 
 CMD /sbin/init
