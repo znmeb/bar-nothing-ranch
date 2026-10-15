@@ -14,8 +14,9 @@ ARG RSTUDIO_LOCALBIN="${RSTUDIO_HOME}/.local/bin"
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update -qq && \
-    apt-get install -qqy --no-install-recommends \
+RUN apt-get update -qq \
+    2>&1 | gzip -9c > /apt-update.log.gz
+RUN apt-get install -qqy --no-install-recommends \
         ca-certificates \
         curl \
         git \
@@ -23,9 +24,9 @@ RUN apt-get update -qq && \
         locales \
         r-base-dev \
         sudo \
-        ubuntu-server-minimal \
-        wget && \
-    apt-get clean -y
+        ubuntu-server \
+        wget \
+        2>&1 | gzip -9c > /apt-install.log.gz
 
 RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
     /usr/sbin/locale-gen
@@ -42,17 +43,20 @@ RUN usermod \
 # https://docs.posit.co/ide/server-pro/admin/getting_started/installation/install-rstudio-server.html#download-and-install
 RUN wget --quiet "${RSTUDIO_PACKAGE}" && \
     apt-get install -qqy \
-        ./rstudio-server-*.deb && \
-    apt-get clean -y && \
+        ./rstudio-server-*.deb \
+        2>&1 | gzip -9c > /rstudio-server.log.gz && \
     rm rstudio-server-*.deb
 
 # https://cran4linux.github.io/bspm/#ubuntu
 RUN . /etc/os-release && \
     URL="https://raw.githubusercontent.com/eddelbuettel/r2u/master/inst/scripts" && \
-    curl -s "${URL}/add_cranapt_${UBUNTU_CODENAME}.sh" | bash -s && \
-    Rscript -e "install.packages(c('devtools', 'remotes'))" && \
-    Rscript -e "update.packages()" && \
-    apt-get clean -y
+    curl -s "${URL}/add_cranapt_${UBUNTU_CODENAME}.sh" | bash -s \
+    2>&1 | gzip -9c > /bspm.log.gz
+
+RUN Rscript -e "install.packages(c('devtools', 'remotes'))" \
+    2>&1 | gzip -9c > /r-devtools.log.gz
+RUN Rscript -e "update.packages()" \
+    2>&1 | gzip -9c > /r-update.log.gz
 
 COPY --chown="${RSTUDIO_USER}:${RSTUDIO_USER}" scripts/ $RSTUDIO_SCRIPTS/
 RUN mkdir -p $RSTUDIO_PROJECTS $RSTUDIO_LOGFILES $RSTUDIO_LOCALBIN && \
@@ -63,13 +67,9 @@ RUN mkdir -p $RSTUDIO_PROJECTS $RSTUDIO_LOGFILES $RSTUDIO_LOCALBIN && \
 USER $RSTUDIO_USER
 WORKDIR $RSTUDIO_SCRIPTS
 
-RUN ./command-line-base.sh && \
-    ./ai-tools.sh
+RUN ./command-line-base.sh
 
 USER root
 WORKDIR /
 
 CMD /sbin/init
-
-
-
