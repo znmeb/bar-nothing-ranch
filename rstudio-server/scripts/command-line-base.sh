@@ -27,6 +27,7 @@ echo "....Installing brew packages"
 brew install --yes --quiet \
   font-caskaydia-cove-nerd-font \
   neovim \
+  node \
   ripgrep \
   starship \
   >> $LOGFILE 2>&1

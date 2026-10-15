@@ -72,4 +72,8 @@ RUN ./command-line-base.sh
 USER root
 WORKDIR /
 
+RUN cp \
+    $RSTUDIO_HOME/.local/share/fonts/CaskaydiaCoveNerdFont-Regular.ttf \
+    /etc/rstudio/fonts/
+
 CMD /sbin/init
