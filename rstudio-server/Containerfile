@@ -20,11 +20,15 @@ RUN apt-get update -qq && \
         curl \
         git \
         gnupg \
+        locales \
         r-base-dev \
         sudo \
         ubuntu-server-minimal \
         wget && \
     apt-get clean -y
+
+RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
+    /usr/sbin/locale-gen
 
 RUN usermod \
         --comment "${RSTUDIO_FULLNAME}" \
@@ -46,6 +50,8 @@ RUN wget --quiet "${RSTUDIO_PACKAGE}" && \
 RUN . /etc/os-release && \
     URL="https://raw.githubusercontent.com/eddelbuettel/r2u/master/inst/scripts" && \
     curl -s "${URL}/add_cranapt_${UBUNTU_CODENAME}.sh" | bash -s && \
+    Rscript -e "install.packages(c('devtools', 'remotes'))" && \
+    Rscript -e "update.packages()" && \
     apt-get clean -y
 
 COPY --chown="${RSTUDIO_USER}:${RSTUDIO_USER}" scripts/ $RSTUDIO_SCRIPTS/
@@ -64,3 +70,6 @@ USER root
 WORKDIR /
 
 CMD /sbin/init
+
+
+
