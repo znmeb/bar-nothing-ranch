@@ -13,11 +13,16 @@ pushd /tmp > /dev/null
         >> $LOGFILE 2>&1
 
     echo "..Installing Node.js"
-    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.8/install.sh | bash
-    \. "$HOME/.nvm/nvm.sh"
-    nvm install 26
-    node -v # Should print "v26.12.0".
-    npm -v # Should print "11.20.0".
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.8/install.sh | bash \
+        >> $LOGFILE 2>&1
+    \. "$HOME/.nvm/nvm.sh" \
+        >> $LOGFILE 2>&1
+    nvm install 26 \
+        >> $LOGFILE 2>&1
+    npm install -g npm@12.2.0 \
+        >> $LOGFILE 2>&1
+    node -v
+    npm -v
 
     popd > /dev/null
 
