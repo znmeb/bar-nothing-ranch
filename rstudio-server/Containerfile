@@ -5,6 +5,7 @@ ARG RSTUDIO_USER=$RSTUDIO_USER
 ARG RSTUDIO_PASSWD=$RSTUDIO_PASSWD
 ARG RSTUDIO_FULLNAME=$RSTUDIO_FULLNAME
 ARG RSTUDIO_PACKAGE=$RSTUDIO_PACKAGE
+ARG TIME_ZONE=$TIME_ZONE
 
 ARG RSTUDIO_HOME="/home/${RSTUDIO_USER}"
 ARG RSTUDIO_LOGFILES="${RSTUDIO_HOME}/Logfiles"
@@ -16,7 +17,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update -qq \
     2>&1 | gzip -9c > /apt-update.log.gz
-RUN apt-get install -qqy \
+RUN apt-get install -qqy --no-install-recommends \
         apt-file \
         ca-certificates \
         cmake \
@@ -24,16 +25,19 @@ RUN apt-get install -qqy \
         dialog \
         git \
         gnupg \
+        libpam-systemd \
         locales \
         openssh-client \
         r-base-dev \
         sudo \
-        ubuntu-server-minimal \
+        systemd \
         wget \
-        2>&1 | gzip -9c > /apt-install.log.gz
+        2>&1 | gzip -9c > /apt-install.log.gz && \
+    apt-get clean -y
 
 RUN echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen && \
     /usr/sbin/locale-gen
+RUN ln -sf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime
 
 RUN usermod \
         --comment "${RSTUDIO_FULLNAME}" \
@@ -46,9 +50,10 @@ RUN usermod \
 
 # https://docs.posit.co/ide/server-pro/admin/getting_started/installation/install-rstudio-server.html#download-and-install
 RUN wget --quiet "${RSTUDIO_PACKAGE}" && \
-    apt-get install -qqy \
+    apt-get install -qqy --no-install-recommends \
         ./rstudio-server-*.deb \
         2>&1 | gzip -9c > /rstudio-server.log.gz && \
+    apt-get clean -y && \
     rm rstudio-server-*.deb
 
 # https://cran4linux.github.io/bspm/#ubuntu
