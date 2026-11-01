@@ -1,0 +1,63 @@
+FROM docker.io/library/ubuntu:stonking
+LABEL maintainer="M. Edward (Ed) Borasky <znmeb@algocompsynth.com>"
+
+ARG ADMIN_USER=$ADMIN_USER
+ARG ADMIN_PASSWD=$ADMIN_PASSWD
+ARG ADMIN_FULLNAME=$ADMIN_FULLNAME
+ARG ADMIN_PACKAGE=$ADMIN_PACKAGE
+ARG TIME_ZONE=$TIME_ZONE
+
+ARG ADMIN_HOME="/home/${ADMIN_USER}"
+ARG ADMIN_LOGFILES="${ADMIN_HOME}/Logfiles"
+ARG ADMIN_SCRIPTS="${ADMIN_HOME}/Scripts"
+ARG ADMIN_PROJECTS="${ADMIN_HOME}/Projects"
+ARG ADMIN_LOCALBIN="${ADMIN_HOME}/.local/bin"
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update -qq \
+    2>&1 | gzip -9c > /apt-update.log.gz
+RUN apt-get install -qqy --no-install-recommends \
+        apt-file \
+        build-essential \
+        ca-certificates \
+        cmake \
+        curl \
+        dialog \
+        git \
+        gnupg \
+        libpam-systemd \
+        openssh-client \
+        sudo \
+        systemd \
+        wget \
+        2>&1 | gzip -9c > /apt-install.log.gz && \
+    apt-file update \
+        2>&1 | gzip -9c > /apt-file-update.log.gz
+
+RUN ln -sf /usr/share/zoneinfo/$TIME_ZONE /etc/localtime
+
+RUN usermod \
+        --comment "${ADMIN_FULLNAME}" \
+        --home "${ADMIN_HOME}" \
+        --login "${ADMIN_USER}" \
+        --move-home \
+        ubuntu && \
+    groupmod --new-name "${ADMIN_USER}" ubuntu && \
+    echo "${ADMIN_USER}:${ADMIN_PASSWD}" | chpasswd
+
+COPY --chown="${ADMIN_USER}:${ADMIN_USER}" scripts/ $ADMIN_SCRIPTS/
+RUN mkdir -p $ADMIN_PROJECTS $ADMIN_LOGFILES $ADMIN_LOCALBIN && \
+    chown -R "${ADMIN_USER}:${ADMIN_USER}" $ADMIN_HOME && \
+    mkdir -p /home/linuxbrew/.linuxbrew/ && \
+    chown -R "${ADMIN_USER}:${ADMIN_USER}" /home/linuxbrew/.linuxbrew/
+
+USER $ADMIN_USER
+WORKDIR $ADMIN_SCRIPTS
+
+RUN ./command-line-base.sh
+
+USER root
+WORKDIR /
+
+CMD /sbin/init
