@@ -54,9 +54,12 @@ RUN mkdir -p $ADMIN_PROJECTS $ADMIN_LOGFILES $ADMIN_LOCALBIN && \
     mkdir -p /home/linuxbrew/.linuxbrew/ && \
     chown -R "${ADMIN_USER}:${ADMIN_USER}" /home/linuxbrew/.linuxbrew/
 
+COPY install-gforth.sh /
+RUN /install-gforth.sh \
+    2>&1 | gzip -9c > /install-gforth.log
+
 USER $ADMIN_USER
 WORKDIR $ADMIN_SCRIPTS
-
 RUN ./command-line-base.sh
 
 USER root
