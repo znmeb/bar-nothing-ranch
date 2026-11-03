@@ -30,6 +30,7 @@ RUN apt-get install -qqy --no-install-recommends \
         openssh-client \
         sudo \
         systemd \
+        time \
         wget \
         2>&1 | gzip -9c > /apt-install.log.gz && \
     apt-file update \
