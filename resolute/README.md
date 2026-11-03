@@ -1,4 +1,4 @@
- # How to build and run
+# How to build and run
  
 1. You will need to set the administrative user password. Do
 

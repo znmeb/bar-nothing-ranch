@@ -20,20 +20,21 @@ RUN apt-get update -qq \
     2>&1 | gzip -9c > /apt-update.log.gz
 RUN apt-get install -qqy --no-install-recommends \
         apt-file \
-        build-essential \
         ca-certificates \
-        cmake \
         curl \
         dialog \
         git \
         gnupg \
+        info \
         libpam-systemd \
         openssh-client \
         sudo \
         systemd \
         time \
+        unminimize \
         wget \
         2>&1 | gzip -9c > /apt-install.log.gz && \
+    echo "y" | unminimize 2>&1 | gzip -9c > /unminimize.log && \
     apt-file update \
         2>&1 | gzip -9c > /apt-file-update.log.gz
 
