@@ -2,10 +2,11 @@
 
 set -eu
 
+source set-envars
 podman container exec \
     --interactive \
     --tty \
     --user $USER \
     --workdir "/home/${USER}" \
-    stonking \
+    $BASE_NAME \
     /bin/bash

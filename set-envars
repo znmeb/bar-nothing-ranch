@@ -1,0 +1,2 @@
+echo "..Setting environment variables"
+export BASE_NAME="$(basename $PWD)"

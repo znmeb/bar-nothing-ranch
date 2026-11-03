@@ -1,4 +1,5 @@
-FROM docker.io/library/ubuntu:stonking
+ARG BASE_NAME=$BASE_NAME
+FROM docker.io/library/ubuntu:$BASE_NAME
 LABEL maintainer="M. Edward (Ed) Borasky <znmeb@algocompsynth.com>"
 
 ARG ADMIN_USER=$ADMIN_USER

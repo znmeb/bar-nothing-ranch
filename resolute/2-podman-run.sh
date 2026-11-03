@@ -2,6 +2,8 @@
 
 set -eu
 
+source set-envars
+
 if [[ "$(uname -m)" == "x86_64" \
   && "$(which nvidia-ctk 2> /dev/null | wc -l)" -gt "0" \
   && "$(nvidia-ctk cdi list | grep gpu | wc -l)" -gt "0" ]]
@@ -16,12 +18,12 @@ fi
 
 podman container run \
     --detach \
-    --name stonking \
-    --hostname stonking \
+    --name $BASE_NAME \
+    --hostname $BASE_NAME \
     --replace \
     --security-opt=label=disable \
     $NVIDIA_FLAGS \
-    stonking:latest \
+    $BASE_NAME:latest \
     /sbin/init
 
 podman container list
