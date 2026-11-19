@@ -20,6 +20,7 @@ RUN apt-get update -qq \
     2>&1 | gzip -9c > /apt-update.log.gz
 RUN apt-get install -qqy --no-install-recommends \
         apt-file \
+        build-essential \
         ca-certificates \
         curl \
         dialog \
