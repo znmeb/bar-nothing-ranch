@@ -58,7 +58,7 @@ RUN mkdir -p $ADMIN_PROJECTS $ADMIN_LOGFILES $ADMIN_LOCALBIN && \
 
 COPY install-gforth.sh /
 RUN /install-gforth.sh \
-    2>&1 | gzip -9c > /install-gforth.log
+    2>&1 | gzip -9c > /install-gforth.log.gz
 
 USER $ADMIN_USER
 WORKDIR $ADMIN_SCRIPTS
